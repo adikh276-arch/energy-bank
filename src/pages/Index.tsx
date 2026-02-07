@@ -10,6 +10,7 @@ import { ProfileTab } from '@/components/ProfileTab';
 import { CrashMode } from '@/components/CrashMode';
 import { CrashButton } from '@/components/CrashButton';
 import { BottomNav, TabId } from '@/components/BottomNav';
+import { DailyPlanner } from '@/components/DailyPlanner';
 
 export default function Index() {
   const {
@@ -54,17 +55,22 @@ export default function Index() {
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto px-4 py-5">
+      <main className="max-w-lg mx-auto px-4 py-5 mb-20">
         {activeTab === 'today' && (
           <div className="space-y-6">
-            <div className="bg-card border border-border/50 rounded-2xl p-6">
+            <div className="bg-card border border-border/50 rounded-2xl p-6 shadow-sm">
               <BalanceDisplay
                 balance={balance}
                 startingEnergy={dayRecord.startingEnergy}
                 isInDebt={isInDebt}
               />
+              {dayRecord.debtRepayment && dayRecord.debtRepayment > 0 && (
+                <div className="mt-4 text-xs text-center text-muted-foreground">
+                  (Reduced by <span className="text-debt">{dayRecord.debtRepayment}</span> units debt repayment)
+                </div>
+              )}
               {isInDebt && (
-                <div className="mt-4 bg-debt/10 border border-debt/20 rounded-lg px-3 py-2 text-center">
+                <div className="mt-4 bg-debt/10 border border-debt/20 rounded-lg px-3 py-2 text-center animate-pulse">
                   <p className="text-xs font-semibold text-debt">
                     ⚠️ You are {debtAmount} units in energy debt
                   </p>
@@ -83,6 +89,8 @@ export default function Index() {
             />
           </div>
         )}
+
+        {activeTab === 'planner' && <DailyPlanner />}
 
         {activeTab === 'insights' && <WeeklyInsights />}
 

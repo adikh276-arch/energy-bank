@@ -1,24 +1,21 @@
+import { useAchievements } from '@/hooks/useAchievements';
 import { useDarkMode } from '@/hooks/useDarkMode';
 import { Switch } from '@/components/ui/switch';
 import { DUMMY_INSIGHTS } from '@/lib/dummy-data';
 
 export function ProfileTab() {
   const { isDark, toggle } = useDarkMode();
-
-  const achievements = [
-    { emoji: '📊', name: 'First Week Tracked', desc: 'Tracked energy for 7 consecutive days' },
-    { emoji: '🛡️', name: 'Crash Prevented', desc: 'Heeded a warning and rested in time' },
-    { emoji: '📈', name: 'ROI Positive', desc: 'Made an energy investment that paid off' },
-  ];
+  const { unlocked, locked } = useAchievements();
 
   return (
     <div className="space-y-6 pb-24">
+      {/* ... (existing header and stats same as before) ... */}
       <div>
         <h2 className="text-xl font-semibold text-foreground">Profile</h2>
         <p className="text-sm text-muted-foreground">Settings & achievements</p>
       </div>
 
-      {/* Quick stats */}
+      {/* Quick stats (keeping same) */}
       <div className="bg-card border border-border/50 rounded-xl p-4 space-y-3">
         <h3 className="text-sm font-semibold text-foreground">Your Energy Profile</h3>
         <div className="grid grid-cols-2 gap-3 text-center">
@@ -50,17 +47,36 @@ export function ProfileTab() {
 
       {/* Achievements */}
       <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">🏆 Achievements Unlocked</h3>
-        {achievements.map(a => (
-          <div key={a.name} className="bg-card border border-border/50 rounded-xl p-4 flex items-center gap-3">
-            <span className="text-2xl">{a.emoji}</span>
+        <h3 className="text-sm font-semibold text-foreground">🏆 Achievements Unlocked ({unlocked.length})</h3>
+        {unlocked.length === 0 && (
+          <p className="text-sm text-muted-foreground italic">No achievements yet. Keep tracking!</p>
+        )}
+        {unlocked.map(a => (
+          <div key={a.title} className="bg-surplus/5 border border-surplus/20 rounded-xl p-4 flex items-center gap-3">
+            <span className="text-2xl">{a.icon}</span>
             <div>
-              <p className="text-sm font-semibold text-foreground">{a.name}</p>
-              <p className="text-xs text-muted-foreground">{a.desc}</p>
+              <p className="text-sm font-semibold text-foreground">{a.title}</p>
+              <p className="text-xs text-muted-foreground">{a.description}</p>
             </div>
           </div>
         ))}
+
+        {locked.length > 0 && (
+          <div className="opacity-60 grayscale">
+            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 mt-4">Locked</h4>
+            {locked.map(a => (
+              <div key={a.title} className="bg-card border border-border/50 rounded-xl p-4 flex items-center gap-3 mb-2">
+                <span className="text-2xl">{a.icon}</span>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">{a.title}</p>
+                  <p className="text-xs text-muted-foreground">{a.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
+
 
       {/* Export */}
       <div className="bg-card border border-border/50 rounded-xl p-4 space-y-2">

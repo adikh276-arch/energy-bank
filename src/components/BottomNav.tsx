@@ -1,6 +1,6 @@
-import { Activity, BarChart3, Share2, User } from 'lucide-react';
+import { Activity, BarChart3, Share2, User, CalendarDays } from 'lucide-react';
 
-export type TabId = 'today' | 'insights' | 'share' | 'profile';
+export type TabId = 'today' | 'planner' | 'insights' | 'share' | 'profile';
 
 interface Props {
   active: TabId;
@@ -9,6 +9,7 @@ interface Props {
 
 const TABS: { id: TabId; label: string; icon: typeof Activity }[] = [
   { id: 'today', label: 'Today', icon: Activity },
+  { id: 'planner', label: 'Planner', icon: CalendarDays },
   { id: 'insights', label: 'Insights', icon: BarChart3 },
   { id: 'share', label: 'Share', icon: Share2 },
   { id: 'profile', label: 'Profile', icon: User },
@@ -25,9 +26,8 @@ export function BottomNav({ active, onNavigate }: Props) {
             <button
               key={tab.id}
               onClick={() => onNavigate(tab.id)}
-              className={`flex flex-col items-center gap-0.5 px-4 py-1 transition-colors ${
-                isActive ? 'text-primary' : 'text-muted-foreground'
-              }`}
+              className={`flex flex-col items-center gap-0.5 px-4 py-1 transition-colors ${isActive ? 'text-primary' : 'text-muted-foreground'
+                }`}
             >
               <Icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 2} />
               <span className="text-[10px] font-medium">{tab.label}</span>

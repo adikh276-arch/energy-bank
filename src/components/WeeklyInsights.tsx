@@ -1,5 +1,6 @@
 import { WEEK_HISTORY, DUMMY_INSIGHTS, DETECTED_PATTERNS } from '@/lib/dummy-data';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { EnergyCalendar } from './EnergyCalendar';
 
 const chartData = WEEK_HISTORY.map(d => ({
   day: new Date(d.date).toLocaleDateString('en-US', { weekday: 'short' }),
@@ -24,6 +25,44 @@ export function WeeklyInsights() {
         <StatCard label="Spent" value={weeklySpent} suffix=" units" color="text-debt" />
         <StatCard label="Net Balance" value={weeklyNet} suffix=" units" color={weeklyNet >= 0 ? 'text-surplus' : 'text-debt'} prefix={weeklyNet >= 0 ? '+' : ''} />
         <StatCard label="Days in Debt" value={daysInDebt} suffix=" days" color="text-debt" />
+      </div>
+
+      {/* NEW: Energy Calendar */}
+      <EnergyCalendar />
+
+      {/* NEW: Active Investments (using dummy data for now or connecting to store) */}
+      <div className="bg-card border border-border/50 rounded-xl p-4">
+        <h3 className="text-sm font-semibold text-foreground mb-3">🌱 Active Investments</h3>
+        <div className="space-y-3">
+          {/* This would ideally map over activeModifiers from store, sticking to dummy/static for now as requested by user context "DUMMY DATA TO INCLUDE" */}
+          <div className="flex items-center justify-between p-3 bg-surplus/5 border border-surplus/20 rounded-lg">
+            <div className="flex items-center gap-3">
+              <div className="bg-surplus/20 p-2 rounded-full">🦴</div>
+              <div>
+                <div className="text-sm font-medium">Physical Therapy</div>
+                <div className="text-xs text-muted-foreground">Payback: +5 units/day</div>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-xs font-mono font-bold text-surplus">5 days left</div>
+              <div className="text-[10px] text-muted-foreground">ROI: +25%</div>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between p-3 bg-surplus/5 border border-surplus/20 rounded-lg">
+            <div className="flex items-center gap-3">
+              <div className="bg-surplus/20 p-2 rounded-full">🥘</div>
+              <div>
+                <div className="text-sm font-medium">Meal Prep</div>
+                <div className="text-xs text-muted-foreground">Payback: +10 units/day</div>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-xs font-mono font-bold text-surplus">2 days left</div>
+              <div className="text-[10px] text-muted-foreground">ROI: +50%</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Chart */}

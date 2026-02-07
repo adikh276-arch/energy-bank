@@ -20,13 +20,51 @@ export interface Transaction {
   timestamp: number;
 }
 
+export interface PlanItem {
+  id: string;
+  activityId: string;
+  order: number;
+}
+
+export interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  unlockedAt?: string;
+}
+
+export interface DayForecast {
+  date: string;
+  predictedEnergy: number;
+  confidence: number;
+  zone: EnergyZone;
+}
+
+export interface RecurringModifier {
+  id: string;
+  sourceActivityId: string;
+  sourceActivityName: string;
+  amountPerDay: number; // positive = gain, negative = ongoing cost
+  daysRemaining: number;
+  totalGenerated: number; // to calculate ROI
+}
+
 export interface DayRecord {
   date: string; // YYYY-MM-DD
   startingEnergy: number;
   expectedEnergy: number;
   transactions: Transaction[];
+  plannedActivities: PlanItem[];
   tags: EnergyTag[];
   isCrashMode: boolean;
+  debtRepayment?: number;
+  activeModifiers?: RecurringModifier[];
+  metrics?: {
+    totalSpent: number;
+    totalDeposited: number;
+    lowestBalance: number;
+  };
 }
 
 export type EnergyTag = 'slept-poorly' | 'high-pain' | 'flare-up' | 'feeling-good' | 'stressed' | 'medicated';

@@ -1,50 +1,58 @@
 import { useAnimatedNumber } from '@/hooks/useAnimatedNumber';
-import { getBalanceColor } from '@/hooks/useEnergyStore';
+import { getBalanceColor, getEnergyZone } from '@/hooks/useEnergyStore';
 
-interface BalanceDisplayProps {
+interface Props {
   balance: number;
   startingEnergy: number;
   isInDebt: boolean;
   compact?: boolean;
+  projected?: number;
 }
 
-export function BalanceDisplay({ balance, startingEnergy, isInDebt, compact }: BalanceDisplayProps) {
-  const displayNum = useAnimatedNumber(balance);
-  const colorClass = getBalanceColor(balance);
-  const pct = Math.max(0, Math.min(100, (balance / Math.max(startingEnergy, 1)) * 100));
+export function BalanceDisplay({ balance, startingEnergy, isInDebt, compact, projected }: Props) {
+  const animatedBalance = useAnimatedNumber(balance);
+  const zone = getEnergyZone(balance, startingEnergy);
+  const color = getBalanceColor(balance);
+
+  // Calculate percentage for the bar
+  // If in debt, bar is 0 (or handled distinctly)
+  const percentage = Math.max(0, Math.min(100, (balance / startingEnergy) * 100));
 
   return (
-    <div className={compact ? "flex items-center gap-3" : "flex flex-col items-center gap-3"}>
-      <div className={compact ? "flex items-baseline gap-1.5" : "flex items-baseline gap-2"}>
-        <span className={`font-mono font-bold tracking-tight ${colorClass} ${compact ? 'text-2xl' : 'text-5xl'} balance-pulse`}>
-          {isInDebt && '−'}{Math.abs(displayNum)}
-        </span>
-        <span className={`text-muted-foreground ${compact ? 'text-xs' : 'text-sm'}`}>units</span>
-      </div>
-
-      {isInDebt && (
-        <span className="text-xs font-semibold text-debt uppercase tracking-wider debt-shake">
-          ⚠️ Energy Debt
-        </span>
+    <div className={`transition-all duration-500 ${compact ? 'text-right' : 'text-center'}`}>
+      {!compact && (
+        <h2 className="text-sm text-muted-foreground mb-1 uppercase tracking-wider font-medium">
+          Current Balance
+        </h2>
       )}
 
+      <div className={`font-mono font-bold tracking-tight ${color} ${compact ? 'text-2xl' : 'text-5xl'}`}>
+        {isInDebt ? '-' : ''}{Math.abs(animatedBalance)}
+        <span className={`text-base ml-1 font-sans font-medium text-muted-foreground`}>units</span>
+      </div>
+
       {!compact && (
-        <div className="w-full max-w-xs">
-          <div className="h-3 rounded-full bg-muted overflow-hidden">
+        <div className="mt-6 w-full max-w-xs mx-auto space-y-2">
+          <div className="h-4 bg-muted/50 rounded-full overflow-hidden relative border border-border/50">
+            {/* Background markers */}
+            <div className="absolute top-0 bottom-0 left-[20%] w-px bg-border/30" />
+            <div className="absolute top-0 bottom-0 left-[50%] w-px bg-border/30" />
+
+            {/* Main Bar */}
             <div
-              className={`h-full rounded-full transition-all duration-700 ease-out ${
-                isInDebt ? 'bg-debt' :
-                pct > 60 ? 'bg-surplus' :
-                pct > 30 ? 'bg-energy-medium' :
-                pct > 15 ? 'bg-energy-low' :
-                'bg-energy-critical'
-              }`}
-              style={{ width: `${Math.max(isInDebt ? 0 : 2, pct)}%` }}
+              className={`h-full transition-all duration-700 ease-out ${isInDebt ? 'bg-debt' :
+                  zone === 'high' ? 'bg-surplus' :
+                    zone === 'medium' ? 'bg-energy-medium' :
+                      zone === 'low' ? 'bg-energy-low' : 'bg-energy-critical'
+                }`}
+              style={{ width: `${isInDebt ? 100 : percentage}%` }}
             />
           </div>
-          <div className="flex justify-between text-xs text-muted-foreground mt-1">
-            <span>0</span>
-            <span>{startingEnergy} (start)</span>
+
+          <div className="flex justify-between text-[10px] text-muted-foreground uppercase font-medium px-1">
+            <span>Critical</span>
+            <span>Safe</span>
+            <span>Rich</span>
           </div>
         </div>
       )}
